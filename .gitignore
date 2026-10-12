@@ -7,3 +7,10 @@ __pycache__/
 !.env.example
 .DS_Store
 Thumbs.db
+
+# Local source PDFs and extracted text
+backend/pdfs/
+backend/extracted/
+
+# Local AI-generated draft outputs
+backend/data/ai_extracted/
