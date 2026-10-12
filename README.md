@@ -1,4 +1,4 @@
-﻿# YojanaMitra
+# YojanaMitra
 
 **Team:** Bug Slayers  
 **Project:** Government Scheme Eligibility Reverse-Matcher  
@@ -28,10 +28,12 @@ YojanaMitra is a web-based prototype that helps users discover Indian government
 - **Ollama model entry:** https://ollama.com/library/qwen3
 
 ## AI Workflow and Current Status
-The utility in `backend/ai_extractor.py` uses Qwen3-1.7B through Ollama to extract structured eligibility information from document text and save JSON output.
 
-The website matcher currently loads its dataset from `backend/data/schemes.json`. AI-generated extraction output is stored separately and is not yet automatically connected to the website matching workflow. Extracted eligibility rules require review against official scheme sources before use.
+The local Qwen3-1.7B model runs through Ollama in `backend/ai_extractor.py` to convert extracted document text into structured eligibility JSON.
 
+When the application loads scheme data, it checks `backend/data/ai_extracted/` for matching extraction files. For a matching scheme, the integration adds new occupation terms without overwriting existing occupation rules. Other extracted fields are not automatically merged.
+
+AI-derived additions remain marked `needs_official_verification`. They are preliminary candidates and must be checked against official government sources. The generated `backend/data/ai_extracted/` folder is excluded from Git, so extraction files must be generated locally for this integration to add occupations.
 ## Run Locally
 Backend: open PowerShell and run `cd C:\Users\ADMIN\YojanaMitra\backend`, activate the virtual environment with `.\venv\Scripts\Activate.ps1`, then run `python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000`.
 

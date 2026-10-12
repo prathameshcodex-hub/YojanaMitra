@@ -154,6 +154,92 @@ def normalized_occupation(value: Any) -> str:
     return raw
 
 
+def merge_ai_extractions(schemes: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Use AI-extracted occupation candidates without overwriting existing rules.
+
+    Extracted criteria are unverified and must not be treated as official rules.
+    """
+    ai_dir = DATA_FILE.parent / "ai_extracted"
+    if not ai_dir.is_dir():
+        return schemes
+
+    for ai_file in sorted(ai_dir.glob("*_eligibility.json")):
+        try:
+            with ai_file.open("r", encoding="utf-8-sig") as file:
+                extracted = json.load(file)
+        except (OSError, json.JSONDecodeError):
+            continue
+
+        if not isinstance(extracted, dict):
+            continue
+
+        ai_name = normalize(str(extracted.get("scheme_name") or ""))
+        if not ai_name:
+            continue
+
+        candidates = [
+            scheme for scheme in schemes
+            if normalize(str(scheme.get("name") or
+                             scheme.get("scheme_name") or "")) == ai_name
+        ]
+
+        if not candidates and "vishwakarma" in ai_name:
+            candidates = [
+                scheme for scheme in schemes
+                if "vishwakarma" in normalize(
+                    str(scheme.get("name") or
+                        scheme.get("scheme_name") or "")
+                )
+            ]
+
+        if len(candidates) != 1:
+            continue
+
+        scheme = candidates[0]
+        incoming = extracted.get("eligibility", {})
+        if not isinstance(incoming, dict):
+            continue
+
+        eligibility = scheme.get("eligibility")
+        if not isinstance(eligibility, dict):
+            eligibility = {}
+
+        existing = eligibility.get("occupation", [])
+        if not isinstance(existing, list):
+            existing = [existing] if existing else []
+
+        additions = incoming.get("occupation", [])
+        if not isinstance(additions, list):
+            additions = [additions] if additions else []
+
+        added_any = False
+        for occupation in additions:
+            if not isinstance(occupation, str) or not occupation.strip():
+                continue
+            if not any(
+                normalize(occupation) == normalize(str(old))
+                for old in existing
+            ):
+                existing.append(occupation.strip())
+                added_any = True
+
+        if added_any:
+            eligibility["occupation"] = existing
+            eligibility["verification_required"] = True
+            eligibility["verification_note"] = (
+                str(eligibility.get("verification_note") or "").strip()
+                + " AI-extracted occupation candidates were added for "
+                "preliminary matching and require official verification."
+            ).strip()
+
+            scheme["eligibility"] = eligibility
+            scheme["verification_required"] = True
+            scheme["verification_status"] = "needs_official_verification"
+            scheme["ai_extraction_used"] = True
+
+    return schemes
+
+
 def load_schemes() -> List[Dict[str, Any]]:
     if not DATA_FILE.exists():
         raise FileNotFoundError(
@@ -169,10 +255,11 @@ def load_schemes() -> List[Dict[str, Any]]:
             "(a list of scheme objects)."
         )
 
-    return [
+    schemes = [
         item for item in data
         if isinstance(item, dict)
     ]
+    return merge_ai_extractions(schemes)
 
 
 def scheme_name(scheme: Dict[str, Any]) -> str:
