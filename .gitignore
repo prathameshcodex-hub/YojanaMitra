@@ -13,4 +13,7 @@ backend/pdfs/
 backend/extracted/
 
 # Local AI-generated draft outputs
-backend/data/ai_extracted/
+backend/data/ai_extracted/*
+!backend/data/ai_extracted/pm_vishwakarma_eligibility.json
+
+*.bak

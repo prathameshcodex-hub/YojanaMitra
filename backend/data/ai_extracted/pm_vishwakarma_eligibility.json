@@ -1,0 +1,64 @@
+{
+  "scheme_name": "PM Vishwakarma",
+  "description": "",
+  "eligibility": {
+    "min_age": 18,
+    "max_age": null,
+    "gender": "Any",
+    "occupation": [
+      "Blacksmith (Lohar)",
+      "Carpenter (Suthar/ Badhai)",
+      "Goldsmith (Sonar)",
+      "Potter (Kumhaar)",
+      "Hammer and Tool Kit Maker",
+      "Locksmith",
+      "Basket/ Mat/ Broom Maker/ Coir Weaver",
+      "Mason (Rajmistri)",
+      "Leather Based (Cobbler)",
+      "Doll & Toy Maker (Traditional)",
+      "Garland Maker (Malakaar)",
+      "Washerman (Dhobi)",
+      "Tailor (Darzi)",
+      "Fishing Net Maker",
+      "artisan",
+      "craftsperson"
+    ],
+    "categories": [
+      "Gold/ Silver Based",
+      "Clay Based",
+      "Stone Based",
+      "Leather Based"
+    ],
+    "max_annual_income": null,
+    "land_owned": null,
+    "max_land_area_acres": null,
+    "residence": [],
+    "disability_required": null,
+    "excluded_if": {
+      "availed_loans": "under similar credit-based schemes in the past 5 years"
+    }
+  },
+  "required_documents": [
+    "Aadhaar",
+    "mobile number",
+    "bank details",
+    "ration card"
+  ],
+  "important_conditions": [
+    "must not have availed loans under similar credit-based schemes in the past 5 years",
+    "only one member of the family can be registered",
+    "No collateral required to avail loans under PM Vishwakarma Scheme",
+    "Credit information report required for those with credit history",
+    "No prepayment penalty after 6 months of loan disbursement"
+  ],
+  "benefits": [
+    "Digital ID",
+    "PM Vishwakarma Digital Certificate",
+    "PM Vishwakarma ID Card"
+  ],
+  "source_notes": [
+    "Document contains trade descriptions and eligibility criteria for PM Vishwakarma Scheme (pages 13-20)",
+    "Information extracted from document chunk 5 of 7, focusing on eligibility, conditions, and benefits as per the scheme",
+    "The provided document chunk does not contain relevant information for the specified eligibility rules."
+  ]
+}
