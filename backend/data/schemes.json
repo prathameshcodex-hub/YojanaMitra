@@ -1,0 +1,611 @@
+[
+  {
+    "id": "pm-kisan",
+    "name": "Pradhan Mantri Kisan Samman Nidhi",
+    "state": "All India",
+    "level": "Central",
+    "description": "Income support scheme for eligible farmer families.",
+    "benefits": "Financial assistance according to current PM-KISAN guidelines.",
+    "eligibility": {
+      "land_owned": true,
+      "verification_required": true,
+      "verification_note": "Verify land records, beneficiary-family criteria and exclusions against current official guidelines."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://pmkisan.gov.in/",
+    "official_source_url": "https://pmkisan.gov.in/"
+  },
+  {
+    "id": "kcc",
+    "name": "Kisan Credit Card",
+    "state": "All India",
+    "level": "Central",
+    "description": "Credit facility for eligible farmers and other eligible agricultural borrowers.",
+    "benefits": "Agricultural credit subject to lending rules and current scheme guidelines.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Confirm applicant category, eligible activities, bank requirements and applicable interest concessions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://www.myscheme.gov.in/",
+    "official_source_url": "https://www.nabard.org/"
+  },
+  {
+    "id": "pm-kisan-maan-dhan",
+    "name": "Pradhan Mantri Kisan Maan-Dhan Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Voluntary contributory pension scheme for eligible small and marginal farmers.",
+    "benefits": "Pension benefits subject to enrolment and applicable scheme conditions.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify farmer category, entry age, landholding limits, exclusions and contribution requirements."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://maandhan.in/",
+    "official_source_url": "https://maandhan.in/"
+  },
+  {
+    "id": "ladki-bahin",
+    "name": "Mukhyamantri Majhi Ladki Bahin Yojana",
+    "state": "Maharashtra",
+    "level": "State",
+    "description": "Maharashtra government direct-benefit scheme for eligible women.",
+    "benefits": "Financial assistance under the current state guidelines.",
+    "eligibility": {
+      "min_age": 21,
+      "max_age": 65,
+      "gender": "Female",
+      "max_annual_income": 250000,
+      "verification_required": true,
+      "verification_note": "Also verify Maharashtra residence, marital-status conditions, family exclusions and current application rules."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://ladakibahin.maharashtra.gov.in/",
+    "official_source_url": "https://ladakibahin.maharashtra.gov.in/scheme_information"
+  },
+  {
+    "id": "swarnima",
+    "name": "Mahila Swarnima Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Financial assistance scheme for eligible women from notified backward classes.",
+    "benefits": "Concessional financial assistance subject to the implementing agency's rules.",
+    "eligibility": {
+      "gender": "Female",
+      "verification_required": true,
+      "verification_note": "Verify notified community, family-income ceiling, loan purpose and current NBCFDC lending conditions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://nbcfdc.gov.in/",
+    "official_source_url": "https://nbcfdc.gov.in/"
+  },
+    {
+    "id": "pmay-urban",
+    "name": "Pradhan Mantri Awas Yojana Urban",
+    "state": "All India",
+    "level": "Central",
+    "description": "Housing assistance under applicable PMAY-Urban scheme components.",
+    "benefits": "Housing support subject to the applicable component and eligibility rules.",
+    "eligibility": {
+      "residence": ["Urban"],
+      "verification_required": true,
+      "verification_note": "Verify the current PMAY-U component, household income, existing house ownership and other exclusions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://pmay-urban.gov.in/",
+    "official_source_url": "https://pmay-urban.gov.in/"
+  },
+  {
+    "id": "pm-vishwakarma",
+    "name": "PM Vishwakarma",
+    "state": "All India",
+    "level": "Central",
+    "description": "Support for eligible traditional artisans and craftspeople.",
+    "benefits": "Training, toolkit incentives and credit-related support subject to scheme rules.",
+    "eligibility": {
+      "min_age": 18,
+      "occupation": ["carpenter", "blacksmith", "goldsmith", "potter", "mason", "washerman", "tailor", "barber", "cobbler", "artisan"],
+      "verification_required": true,
+      "verification_note": "Verify the official notified trade list, self-employment conditions, family restrictions and previous-loan conditions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Mobile Number", "Bank Account Details", "Ration Card"],
+    "application_url": "https://pmvishwakarma.gov.in/",
+    "official_source_url": "https://pmvishwakarma.gov.in/"
+  },
+  {
+    "id": "pm-svanidhi",
+    "name": "PM Street Vendor's AtmaNirbhar Nidhi",
+    "state": "All India",
+    "level": "Central",
+    "description": "Credit support scheme for eligible street vendors.",
+    "benefits": "Working-capital loan facilities and applicable incentives under current rules.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify vendor identification, certificate or survey status, lending conditions and current scheme extensions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://pmsvanidhi.mohua.gov.in/",
+    "official_source_url": "https://pmsvanidhi.mohua.gov.in/"
+  },
+  {
+    "id": "pm-kusum",
+    "name": "PM-KUSUM",
+    "state": "All India",
+    "level": "Central",
+    "description": "Support for eligible solar energy installations in the agricultural sector.",
+    "benefits": "Assistance under applicable components and state implementation rules.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify the relevant component, state availability, beneficiary category, project requirements and current application window."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://pmkusum.mnre.gov.in/",
+    "official_source_url": "https://pmkusum.mnre.gov.in/"
+  },
+  {
+    "id": "nfbs",
+    "name": "National Family Benefit Scheme",
+    "state": "All India",
+    "level": "Central",
+    "description": "Financial assistance scheme implemented through applicable social assistance arrangements.",
+    "benefits": "Assistance subject to current scheme rules and state implementation.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify household circumstances, qualifying death conditions, income or poverty criteria and the applicable state process."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://nsap.nic.in/",
+    "official_source_url": "https://nsap.nic.in/"
+  },
+    {
+    "id": "mgnrega",
+    "name": "Mahatma Gandhi National Rural Employment Guarantee Act",
+    "state": "All India",
+    "level": "Central",
+    "description": "Rural household employment guarantee implemented by eligible local authorities.",
+    "benefits": "Wage employment according to the Act and applicable rules.",
+    "eligibility": {
+      "residence": ["Rural"],
+      "verification_required": true,
+      "verification_note": "Verify rural household registration, adult household members willing to perform unskilled manual work and local job-card requirements."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar"],
+    "application_url": "https://nrega.nic.in/",
+    "official_source_url": "https://nrega.nic.in/"
+  },
+  {
+    "id": "pmgsy",
+    "name": "Pradhan Mantri Gram Sadak Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Rural road connectivity programme implemented through government agencies.",
+    "benefits": "Rural infrastructure development; generally not an individual cash-benefit scheme.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "This is primarily an infrastructure programme. Do not present it as a direct individual cash benefit."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": [],
+    "application_url": "https://pmgsy.nic.in/",
+    "official_source_url": "https://pmgsy.nic.in/"
+  },
+  {
+    "id": "jal-jeevan",
+    "name": "Jal Jeevan Mission",
+    "state": "All India",
+    "level": "Central",
+    "description": "Programme focused on rural household tap-water supply.",
+    "benefits": "Rural drinking-water infrastructure and service provision.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "This is a public service programme, not necessarily an individual cash transfer. Verify local coverage through the relevant authority."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": [],
+    "application_url": "https://jaljeevanmission.gov.in/",
+    "official_source_url": "https://jaljeevanmission.gov.in/"
+  },
+  {
+    "id": "sbm",
+    "name": "Swachh Bharat Mission Grameen",
+    "state": "All India",
+    "level": "Central",
+    "description": "Rural sanitation and cleanliness programme.",
+    "benefits": "Sanitation support under applicable programme guidelines.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify the relevant component, household eligibility and current state implementation conditions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": [],
+    "application_url": "https://swachhbharatmission.ddws.gov.in/",
+    "official_source_url": "https://swachhbharatmission.ddws.gov.in/"
+  },
+  {
+    "id": "pmfme",
+    "name": "PM Formalisation of Micro Food Processing Enterprises",
+    "state": "All India",
+    "level": "Central",
+    "description": "Support for eligible micro food-processing enterprises.",
+    "benefits": "Credit-linked and other support under the applicable scheme guidelines.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify enterprise type, applicant category, project details, financial conditions and whether applications are currently accepted."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://pmfme.mofpi.gov.in/",
+    "official_source_url": "https://pmfme.mofpi.gov.in/"
+  },
+    {
+    "id": "pmegp",
+    "name": "Prime Minister's Employment Generation Programme",
+    "state": "All India",
+    "level": "Central",
+    "description": "Credit-linked assistance programme for eligible micro-enterprise projects.",
+    "benefits": "Margin-money subsidy subject to scheme and bank conditions.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify age, project cost, education conditions where applicable, eligible activities and current KVIC guidelines."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://www.kviconline.gov.in/pmegpeportal/",
+    "official_source_url": "https://www.kviconline.gov.in/pmegpeportal/"
+  },
+  {
+    "id": "mudra",
+    "name": "Pradhan Mantri MUDRA Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Loans through eligible lending institutions for qualifying micro enterprises.",
+    "benefits": "Business credit according to lender appraisal and applicable loan categories.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify business activity, lender requirements, repayment capacity and the current applicable loan category."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://www.mudra.org.in/",
+    "official_source_url": "https://www.mudra.org.in/"
+  },
+  {
+    "id": "stand-up-india",
+    "name": "Stand-Up India",
+    "state": "All India",
+    "level": "Central",
+    "description": "Bank-loan programme designed to support eligible women and SC/ST entrepreneurs.",
+    "benefits": "Bank credit subject to applicable programme rules and current availability.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify applicant category, ownership or control of the enterprise, greenfield project requirements and current availability."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://www.standupmitra.in/",
+    "official_source_url": "https://www.standupmitra.in/"
+  },
+  {
+    "id": "startup-india",
+    "name": "Startup India",
+    "state": "All India",
+    "level": "Central",
+    "description": "Government initiative supporting eligible startups through recognition and associated programmes.",
+    "benefits": "Recognition and access to applicable support programmes, subject to separate criteria.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Startup recognition is not automatic funding. Verify entity type, incorporation date and current DPIIT recognition criteria."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": [],
+    "application_url": "https://www.startupindia.gov.in/",
+    "official_source_url": "https://www.startupindia.gov.in/"
+  },
+  {
+    "id": "cgtmse",
+    "name": "Credit Guarantee Fund Trust for Micro and Small Enterprises",
+    "state": "All India",
+    "level": "Central",
+    "description": "Credit guarantee framework for eligible loans to micro and small enterprises.",
+    "benefits": "Credit guarantee coverage for eligible lending arrangements; not a direct cash grant to applicants.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify enterprise classification, lender participation, loan eligibility and current guarantee rules."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": [],
+    "application_url": "https://www.cgtmse.in/",
+    "official_source_url": "https://www.cgtmse.in/"
+  },
+    {
+    "id": "pmkvy",
+    "name": "Pradhan Mantri Kaushal Vikas Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Skill training and certification initiative under applicable programme guidelines.",
+    "benefits": "Training and assessment support for eligible courses and batches.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify active batches, age conditions, course availability and training-centre requirements."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar"],
+    "application_url": "https://www.pmkvyofficial.org/",
+    "official_source_url": "https://www.pmkvyofficial.org/"
+  },
+  {
+    "id": "ddu-gky",
+    "name": "Deen Dayal Upadhyaya Grameen Kaushalya Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Rural youth skill-development and placement-linked programme.",
+    "benefits": "Training and placement-related support under current programme rules.",
+    "eligibility": {
+      "residence": ["Rural"],
+      "verification_required": true,
+      "verification_note": "Verify age, rural-poor eligibility criteria, state implementation and active training providers."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar"],
+    "application_url": "https://ddugky.gov.in/",
+    "official_source_url": "https://ddugky.gov.in/"
+  },
+  {
+    "id": "pmjay",
+    "name": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Health coverage for eligible households under applicable scheme criteria.",
+    "benefits": "Cashless treatment coverage under approved packages and scheme rules.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Eligibility depends on official beneficiary records and applicable state arrangements; verify through the official beneficiary system."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar"],
+    "application_url": "https://beneficiary.nha.gov.in/",
+    "official_source_url": "https://nha.gov.in/PM-JAY"
+  },
+  {
+    "id": "pm-ujjwala",
+    "name": "Pradhan Mantri Ujjwala Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "LPG connection scheme for eligible households under current rules.",
+    "benefits": "LPG connection support subject to eligibility and applicable assistance guidelines.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify adult-woman applicant requirement, household eligibility, existing LPG connection and current documentation rules."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Ration Card"],
+    "application_url": "https://www.pmuy.gov.in/",
+    "official_source_url": "https://www.pmuy.gov.in/"
+  },
+  {
+    "id": "pmjdy",
+    "name": "Pradhan Mantri Jan-Dhan Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Financial inclusion initiative to facilitate access to basic banking services.",
+    "benefits": "Basic bank-account services and applicable benefits under current rules.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify bank-account requirements and eligibility for any linked insurance or overdraft benefit separately."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar"],
+    "application_url": "https://pmjdy.gov.in/",
+    "official_source_url": "https://pmjdy.gov.in/"
+  },
+    {
+    "id": "pm-surya-ghar",
+    "name": "PM Surya Ghar: Muft Bijli Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Residential rooftop solar programme.",
+    "benefits": "Central financial assistance under applicable rooftop-solar guidelines.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify residential connection, eligible system capacity, vendor conditions and current subsidy terms."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://pmsuryaghar.gov.in/",
+    "official_source_url": "https://pmsuryaghar.gov.in/"
+  },
+  {
+    "id": "national-scholarship-portal",
+    "name": "National Scholarship Portal",
+    "state": "All India",
+    "level": "Central",
+    "description": "Online platform for participating government scholarship schemes.",
+    "benefits": "Scholarship assistance as specified by the individual scholarship.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "This portal hosts multiple scholarships. Verify the specific scholarship, education level, marks, income and category requirements."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://scholarships.gov.in/",
+    "official_source_url": "https://scholarships.gov.in/"
+  },
+  {
+    "id": "pmfby",
+    "name": "Pradhan Mantri Fasal Bima Yojana",
+    "state": "All India",
+    "level": "Central",
+    "description": "Crop insurance scheme subject to notified crops and applicable state-season rules.",
+    "benefits": "Insurance protection as provided by the current scheme and policy terms.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify notified crops, area, season, enrolment dates and current farmer eligibility."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://pmfby.gov.in/",
+    "official_source_url": "https://pmfby.gov.in/"
+  },
+  {
+    "id": "pmay-gramin",
+    "name": "Pradhan Mantri Awaas Yojana Gramin",
+    "state": "All India",
+    "level": "Central",
+    "description": "Rural housing programme for households selected under applicable eligibility rules.",
+    "benefits": "Housing assistance as prescribed by current programme guidelines.",
+    "eligibility": {
+      "residence": ["Rural"],
+      "verification_required": true,
+      "verification_note": "Verify official household selection, deprivation criteria, exclusions and current beneficiary lists."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://pmayg.nic.in/",
+    "official_source_url": "https://pmayg.nic.in/"
+  },
+  {
+    "id": "namo-shetkari",
+    "name": "Namo Shetkari Mahasanman Nidhi Yojana",
+    "state": "Maharashtra",
+    "level": "State",
+    "description": "Maharashtra farmer-support scheme linked to applicable state rules.",
+    "benefits": "Financial assistance according to the current state scheme guidelines.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify PM-KISAN beneficiary requirements, state-specific conditions and current government resolutions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://mahadbt.maharashtra.gov.in/",
+    "official_source_url": "https://mahadbt.maharashtra.gov.in/"
+  },
+    {
+    "id": "mahadbt-micro-irrigation",
+    "name": "PMKSY Per Drop More Crop Micro-Irrigation",
+    "state": "Maharashtra",
+    "level": "State",
+    "description": "Micro-irrigation support available through applicable Maharashtra agriculture schemes.",
+    "benefits": "Assistance subject to component, applicant eligibility and current state guidelines.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify farmer registration, land and crop requirements, approved equipment, subsidy ceilings and current application window."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://mahadbt.maharashtra.gov.in/farmer/login",
+    "official_source_url": "https://mahadbt.maharashtra.gov.in/"
+  },
+  {
+    "id": "dr-ambedkar-krushi-swavalamban",
+    "name": "Dr. Babasaheb Ambedkar Krushi Swavalamban Yojana",
+    "state": "Maharashtra",
+    "level": "State",
+    "description": "Agriculture support scheme for eligible SC farmers under Maharashtra guidelines.",
+    "benefits": "Agricultural inputs or infrastructure assistance according to approved scheme components.",
+    "eligibility": {
+      "categories": ["SC"],
+      "verification_required": true,
+      "verification_note": "Verify category certificate, landholding requirements, income conditions and current agriculture-department rules."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://mahadbt.maharashtra.gov.in/farmer/login",
+    "official_source_url": "https://mahadbt.maharashtra.gov.in/"
+  },
+  {
+    "id": "birsa-munda-krishi-kranti",
+    "name": "Birsa Munda Krishi Kranti Yojana",
+    "state": "Maharashtra",
+    "level": "State",
+    "description": "Agriculture support scheme for eligible tribal farmers under Maharashtra guidelines.",
+    "benefits": "Agricultural assistance according to the applicable scheme components.",
+    "eligibility": {
+      "categories": ["ST"],
+      "verification_required": true,
+      "verification_note": "Verify tribal-category requirements, land records, income conditions and the applicable Tribal Sub-Plan component."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://mahadbt.maharashtra.gov.in/farmer/login",
+    "official_source_url": "https://mahadbt.maharashtra.gov.in/"
+  },
+  {
+    "id": "bhausaheb-fundkar-phalbaag",
+    "name": "Bhausaheb Fundkar Phalbaag Lagvad Yojana",
+    "state": "Maharashtra",
+    "level": "State",
+    "description": "Maharashtra scheme supporting eligible orchard plantation activities.",
+    "benefits": "Assistance for eligible horticulture activities under current scheme rules.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify eligible fruit crops, acreage, farmer category, maintenance requirements and current application conditions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details", "Land Ownership Record"],
+    "application_url": "https://mahadbt.maharashtra.gov.in/farmer/login",
+    "official_source_url": "https://mahadbt.maharashtra.gov.in/"
+  },
+  {
+    "id": "cm-vayoshree",
+    "name": "Mukhyamantri Vayoshree Yojana",
+    "state": "Maharashtra",
+    "level": "State",
+    "description": "Maharashtra assistance scheme for eligible senior citizens.",
+    "benefits": "Assistance subject to current state government rules.",
+    "eligibility": {
+      "verification_required": true,
+      "verification_note": "Verify the current age threshold, income criteria, residence, eligible assistive items and application conditions."
+    },
+    "verification_required": true,
+    "verification_status": "needs_official_verification",
+    "required_documents": ["Aadhaar", "Bank Account Details"],
+    "application_url": "https://sjsa.maharashtra.gov.in/",
+    "official_source_url": "https://sjsa.maharashtra.gov.in/"
+  }
+]

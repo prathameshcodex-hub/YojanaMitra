@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YojanaMitra | Government Scheme Matcher</title>
+
+<style>
+:root {
+    --navy: #14234f;
+    --blue: #2456d8;
+    --green: #16834a;
+    --red: #b42332;
+    --text: #172033;
+    --muted: #637087;
+    --border: #dce3ef;
+    --background: #f2f5fa;
+    --white: #ffffff;
+    --shadow: 0 8px 28px rgba(22, 42, 82, 0.07);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    line-height: 1.55;
+}
+
+button, input, select {
+    font: inherit;
+}
+
+header {
+    background: linear-gradient(115deg, #14234f, #21449b);
+    color: white;
+    padding: 17px 6%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #31b7ed, #2461e9);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.brand h1 {
+    font-size: 24px;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.brand p {
+    margin: 4px 0 0;
+    color: #d7e2ff;
+    font-size: 12px;
+}
+
+.team {
+    color: #dce5ff;
+    font-size: 14px;
+}
+
+.container {
+    max-width: 1250px;
+    width: 92%;
+    margin: 28px auto 55px;
+}
+
+.hero {
+    color: white;
+    padding: 34px;
+    border-radius: 0 0 22px 22px;
+    background: linear-gradient(115deg, #121e43, #203f91);
+    margin-top: -28px;
+    margin-bottom: 28px;
+}
+
+.hero h2 {
+    font-size: clamp(25px, 4vw, 36px);
+    margin: 0 0 10px;
+}
+
+.hero p {
+    max-width: 780px;
+    color: #dce5ff;
+    margin: 0;
+}
+
+.hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 20px;
+}
+
+.hero-badges span {
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.08);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 12px;
+}
+
+.panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 26px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+}
+
+.section-heading {
+    margin: 0 0 5px;
+    font-size: 21px;
+}
+
+.section-description {
+    color: var(--muted);
+    margin: 0 0 22px;
+    font-size: 14px;
+}
+
+.form-section {
+    padding-top: 22px;
+    margin-top: 22px;
+    border-top: 1px solid #e8edf5;
+}
+
+.form-section:first-of-type {
+    border-top: 0;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.form-section h3 {
+    font-size: 16px;
+    margin: 0 0 16px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.field {
+    min-width: 0;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 650;
+    color: #34415a;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid #cfd8e6;
+    border-radius: 9px;
+    background: white;
+    color: var(--text);
+    padding: 10px 12px;
+    outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(36, 86, 216, 0.12);
+}
+
+.field small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.check-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    background: white;
+}
+
+.check-item input {
+    margin-top: 3px;
+    accent-color: var(--blue);
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-top: 25px;
+}
+
+.primary-button {
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(110deg, #2456d8, #3478ef);
+    color: white;
+    font-weight: 700;
+    padding: 14px 24px;
+    cursor: pointer;
+    box-shadow: 0 5px 14px rgba(36, 86, 216, .2);
+}
+
+.primary-button:hover {
+    filter: brightness(1.05);
+}
+
+.primary-button:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
+.secondary-button {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    color: #34415a;
+    padding: 13px 18px;
+    cursor: pointer;
+}
+
+.privacy-note {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.status-box {
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.status-error {
+    color: #9f2033;
+    background: #fff0f2;
+    border: 1px solid #ffc9d0;
+}
+
+.status-loading {
+    color: #21449b;
+    background: #edf3ff;
+    border: 1px solid #cfddff;
+}
+
+.results-header {
+    background: linear-gradient(115deg, #121e43, #203f91);
+    color: white;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 27px;
+}
+
+.results-header h2 {
+    margin: 0 0 5px;
+}
+
+.results-header p {
+    color: #dce5ff;
+    margin: 0;
+    font-size: 14px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 22px;
+}
+
+.stat {
+    border: 1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.08);
+    border-radius: 12px;
+    padding: 17px;
+}
+
+.stat strong {
+    display: block;
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+.stat span {
+    display: block;
+    font-size: 12px;
+    color: #dce5ff;
+    margin-top: 7px;
+}
+
+.results-section {
+    margin-top: 28px;
+}
+
+.results-section h2 {
+    font-size: 21px;
+    margin: 0 0 16px;
+}
+
+.results-count {
+    float: right;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12px;
+    background: #fff0c2;
+    color: #805b00;
+}
+
+.results-count.rejected {
+    background: #ffe5e8;
+    color: #a91d32;
+}
+
+.scheme-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 21px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 16px rgba(22, 42, 82, .035);
+    overflow-wrap: anywhere;
+}
+
+.scheme-card.match {
+    border-color: #c9d9fb;
+}
+
+.scheme-card.rejected {
+    border-color: #ffc6cd;
+}
+
+.scheme-card h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+}
+
+.scheme-card.rejected h3 {
+    color: var(--red);
+}
+
+.scheme-card p {
+    color: var(--muted);
+    margin: 7px 0;
+    font-size: 14px;
+}
+
+.scheme-topline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tag {
+    flex-shrink: 0;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 750;
+    color: #805b00;
+    background: #fff0c2;
+}
+
+.tag.no-match {
+    color: #a91d32;
+    background: #ffe5e8;
+}
+
+.scheme-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 13px 0;
+}
+
+.scheme-meta span {
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 6px;
+    color: #40516d;
+    background: #f0f3f8;
+}
+
+.scheme-card h4 {
+    font-size: 13px;
+    margin: 15px 0 7px;
+}
+
+.scheme-card ul {
+    padding-left: 20px;
+    margin: 6px 0;
+    color: #53627b;
+    font-size: 13px;
+}
+
+.scheme-card li {
+    margin: 5px 0;
+}
+
+.apply-link {
+    display: inline-block;
+    margin-top: 13px;
+    background: #2456d8;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 650;
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+.apply-link:hover {
+    background: #1945b5;
+}
+
+.empty-state {
+    text-align: center;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 30px 20px;
+    color: var(--muted);
+}
+
+.empty-state h3 {
+    color: var(--text);
+    margin: 0 0 7px;
+}
+
+.results-actions {
+    margin-top: 25px;
+}
+
+footer {
+    text-align: center;
+    padding: 24px 15px;
+    color: #758197;
+    font-size: 12px;
+}
+
+.disclaimer {
+    border-left: 3px solid #e2a52d;
+    background: #fff9e9;
+    color: #72551b;
+    padding: 12px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+@media (max-width: 850px) {
+    .form-grid,
+    .check-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    header {
+        padding: 13px 4%;
+    }
+
+    .brand h1 {
+        font-size: 20px;
+    }
+
+    .team {
+        font-size: 11px;
+    }
+
+    .container {
+        width: 94%;
+        margin-top: 20px;
+    }
+
+    .hero {
+        margin-top: -20px;
+        padding: 25px 20px;
+    }
+
+    .panel {
+        padding: 19px;
+    }
+
+    .form-grid,
+    .check-grid,
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .results-header {
+        padding: 20px;
+    }
+
+    .scheme-topline {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <div class="brand-icon">Y</div>
+        <div>
+            <h1>YojanaMitra</h1>
+            <p>AI-Powered Government Scheme Matcher</p>
+        </div>
+    </div>
+    <div class="team">Team <strong>Bug Slayers</strong></div>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <h2>Find Government Schemes You May Qualify For</h2>
+        <p>
+            Enter your details once. YojanaMitra compares your profile with
+            the scheme criteria in its dataset and identifies potential
+            matches that may need official verification.
+        </p>
+        <div class="hero-badges">
+            <span>✓ Profile-based screening</span>
+            <span>✓ Potential matches</span>
+            <span>✓ Official information links</span>
+        </div>
+    </section>
+
+    <div id="errorBox"
+         class="status-box status-error hidden"
+         role="alert"></div>
+
+    <div id="loadingBox"
+         class="status-box status-loading hidden"
+         role="status">
+        Checking your profile against available schemes. Please wait…
+    </div>
+
+    <section class="panel" id="formPanel">
+
+        <h2 class="section-heading">Your Profile</h2>
+
+        <p class="section-description">
+            Fill in your details to discover schemes that may fit your
+            situation. Fields marked with * are required.
+        </p>
+
+        <form id="profileForm">
+
+            <div class="form-section">
+                <h3>Personal Information</h3>
+
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label for="age">Age *</label>
+                        <input id="age" name="age" type="number"
+                               min="0" max="120" required value="25">
+                    </div>
+
+                    <div class="field">
+                        <label for="state">State / UT *</label>
+                        <select id="state" name="state" required>
+                            <option value="">Select state</option>
+                            <option>Andhra Pradesh</option>
+                            <option>Arunachal Pradesh</option>
+                            <option>Assam</option>
+                            <option>Bihar</option>
+                            <option>Chhattisgarh</option>
+                            <option>Goa</option>
+                            <option>Gujarat</option>
+                            <option>Haryana</option>
+                            <option>Himachal Pradesh</option>
+                            <option>Jharkhand</option>
+                            <option>Karnataka</option>
+                            <option>Kerala</option>
+                            <option>Madhya Pradesh</option>
+                            <option>Maharashtra</option>
+                            <option>Manipur</option>
+                            <option>Meghalaya</option>
+                            <option>Mizoram</option>
+                            <option>Nagaland</option>
+                            <option>Odisha</option>
+                            <option>Punjab</option>
+                            <option>Rajasthan</option>
+                            <option>Sikkim</option>
+                            <option>Tamil Nadu</option>
+                            <option>Telangana</option>
+                            <option>Tripura</option>
+                            <option>Uttar Pradesh</option>
+                            <option>Uttarakhand</option>
+                            <option>West Bengal</option>
+                            <option>Andaman and Nicobar Islands</option>
+                            <option>Chandigarh</option>
+                            <option>Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option>Delhi</option>
+                            <option>Jammu and Kashmir</option>
+                            <option>Ladakh</option>
+                            <option>Lakshadweep</option>
+                            <option>Puducherry</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="district">District *</label>
+                        <input id="district" name="district" required
+                               placeholder="e.g. Pune">
+                    </div>
+
+                    <div class="field">
+                        <label for="gender">Gender *</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="marital_status">Marital Status *</label>
+                        <select id="marital_status" name="marital_status"
+                                required>
+                            <option value="">Select status</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Widowed">Widowed</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="family_size">Family Size *</label>
+                        <input id="family_size" name="family_size"
+                               type="number" min="1" max="50"
+                               required value="4">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Occupation and Economic Information</h3>
+
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label for="occupation">Occupation *</label>
+                        <select id="occupation" name="occupation" required>
+                            <option value="">Select occupation</option>
+
+                            <optgroup label="Agriculture">
+                                <option value="Farmer">Farmer</option>
+                            </optgroup>
+
+                            <optgroup label="Traditional Trades">
+                                <option value="Carpenter">Carpenter</option>
+                                <option value="Boat Maker">Boat Maker</option>
+                                <option value="Armourer">Armourer</option>
+                                <option value="Blacksmith">Blacksmith</option>
+                                <option value="Hammer and Tool Kit Maker">
+                                    Hammer and Tool Kit Maker
+                                </option>
+                                <option value="Locksmith">Locksmith</option>
+                                <option value="Goldsmith">Goldsmith</option>
+                                <option value="Potter">Potter</option>
+                                <option value="Sculptor">Sculptor / Stone Carver</option>
+                                <option value="Leather Based">Cobbler / Leather Worker</option>
+                                <option value="Mason">Mason</option>
+                                <option value="Basket/ Mat/ Broom Maker/ Coir Weaver">
+                                    Basket / Mat / Broom Maker
+                                </option>
+                                <option value="Doll & Toy Maker">Doll &amp; Toy Maker</option>
+                                <option value="Barber">Barber</option>
+                                <option value="Garland Maker">Garland Maker</option>
+                                <option value="Washerman">Washerman</option>
+                                <option value="Tailor">Tailor</option>
+                                <option value="Fishing Net Maker">Fishing Net Maker</option>
+                                <option value="Artisan">Artisan / Craftsperson</option>
+                            </optgroup>
+
+                            <optgroup label="Other Occupations">
+                                <option value="Student">Student</option>
+                                <option value="Self-Employed">Self-Employed</option>
+                                <option value="Private Employee">Private Employee</option>
+                                <option value="Government Employee">Government Employee</option>
+                                <option value="Homemaker">Homemaker</option>
+                                <option value="Unemployed">Unemployed</option>
+                                <option value="Other">Other</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="annual_income">
+                            Annual Family Income (₹) *
+                        </label>
+                        <input id="annual_income" name="annual_income"
+                               type="number" min="0" required value="300000">
+                    </div>
+
+                    <div class="field">
+                        <label for="category">Social Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select category</option>
+                            <option value="General">General</option>
+                            <option value="SC">SC</option>
+                            <option value="ST">ST</option>
+                            <option value="OBC">OBC</option>
+                            <option value="EWS">EWS</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="education">Education *</label>
+                        <select id="education" name="education" required>
+                            <option value="">Select education</option>
+                            <option value="No formal education">No formal education</option>
+                            <option value="Primary">Primary</option>
+                            <option value="Secondary">Secondary</option>
+                            <option value="Higher Secondary">Higher Secondary</option>
+                            <option value="Graduate">Graduate</option>
+                            <option value="Postgraduate">Postgraduate</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Land and Residence</h3>
+
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label for="land_owned">
+                            Do you own agricultural land? *
+                        </label>
+                        <select id="land_owned" name="land_owned" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="land_area_acres">Land Area (acres)</label>
+                        <input id="land_area_acres" name="land_area_acres"
+                               type="number" min="0" step="0.01"
+                               placeholder="Leave blank if not applicable">
+                    </div>
+
+                    <div class="field">
+                        <label for="residence">Residence Type *</label>
+                        <select id="residence" name="residence" required>
+                            <option value="">Select residence</option>
+                            <option value="Rural">Rural</option>
+                            <option value="Urban">Urban</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Additional Eligibility Conditions</h3>
+
+                <p class="section-description">
+                    Answer these questions accurately. Actual scheme rules
+                    may contain additional conditions.
+                </p>
+
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label for="disability_status">
+                            Do you have a disability? *
+                        </label>
+                        <select id="disability_status"
+                                name="disability_status" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="income_tax_payer">
+                            Are you an income-tax payer? *
+                        </label>
+                        <select id="income_tax_payer"
+                                name="income_tax_payer" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="government_employee">
+                            Government employee? *
+                        </label>
+                        <select id="government_employee"
+                                name="government_employee" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="government_pensioner">
+                            Government pensioner? *
+                        </label>
+                        <select id="government_pensioner"
+                                name="government_pensioner" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="monthly_pension">
+                            Monthly Government Pension (₹)
+                        </label>
+                        <input id="monthly_pension" name="monthly_pension"
+                               type="number" min="0"
+                               placeholder="Leave blank if not applicable">
+                    </div>
+
+                    <div class="field">
+                        <label for="professional_practice">
+                            Practicing a listed profession? *
+                        </label>
+                        <select id="professional_practice"
+                                name="professional_practice" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="institutional_landholder">
+                            Institutional landholder? *
+                        </label>
+                        <select id="institutional_landholder"
+                                name="institutional_landholder" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>PM Vishwakarma Screening Questions</h3>
+
+                <p class="section-description">
+                    These questions are used for preliminary screening.
+                    Choose “Not sure / Not answered” when you need to verify
+                    the answer.
+                </p>
+
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label for="self_employed">
+                            Are you self-employed in the unorganized sector?
+                        </label>
+                        <select id="self_employed" name="self_employed">
+                            <option value="">Not sure / Not answered</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="actively_engaged_in_trade">
+                            Are you currently engaged in this traditional trade?
+                        </label>
+                        <select id="actively_engaged_in_trade"
+                                name="actively_engaged_in_trade">
+                            <option value="">Not sure / Not answered</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="family_member_registered">
+                            Has another family member registered for PM Vishwakarma?
+                        </label>
+                        <select id="family_member_registered"
+                                name="family_member_registered">
+                            <option value="">Not sure / Not answered</option>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="family_member_in_government_service">
+                            Does any family member work in government service?
+                        </label>
+                        <select id="family_member_in_government_service"
+                                name="family_member_in_government_service">
+                            <option value="">Not sure / Not answered</option>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="similar_loan_last_5_years">
+                            Have you received a similar government business
+                            loan in the last 5 years?
+                        </label>
+                        <select id="similar_loan_last_5_years"
+                                name="similar_loan_last_5_years">
+                            <option value="">Not sure / Not answered</option>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="previous_loan_scheme">
+                            Previous loan scheme, if applicable
+                        </label>
+                        <select id="previous_loan_scheme"
+                                name="previous_loan_scheme">
+                            <option value="">Not sure / Not applicable</option>
+                            <option value="MUDRA">MUDRA</option>
+                            <option value="PM SVANidhi">PM SVANidhi</option>
+                            <option value="Other">Other scheme</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="previous_loan_fully_repaid">
+                            Has that previous loan been fully repaid?
+                        </label>
+                        <select id="previous_loan_fully_repaid"
+                                name="previous_loan_fully_repaid">
+                            <option value="">Not sure / Not applicable</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Documents You Already Have</h3>
+
+                <p class="section-description">
+                    Select the documents you already have. The final
+                    requirements depend on the selected scheme.
+                </p>
+
+                <div class="check-grid">
+
+                    <label class="check-item">
+                        <input type="checkbox" name="documents"
+                               value="Aadhaar Card">
+                        Aadhaar Card
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="documents"
+                               value="Aadhaar">
+                        Aadhaar
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="documents"
+                               value="Mobile Number">
+                        Mobile Number
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="documents"
+                               value="Bank Account Details">
+                        Bank Account Details
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="documents"
+                               value="Bank Details">
+                        Bank Details
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="documents"
+                               value="Land Ownership Record">
+                        Land Ownership Record
+                    </label>
+
+                    <label class="check-item">
+                        <input type="checkbox" name="documents"
+                               value="Ration Card">
+                        Ration Card
+                    </label>
+
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="primary-button" id="submitButton" type="submit">
+                    Find Potential Schemes →
+                </button>
+
+                <button class="secondary-button" type="reset">
+                    Reset Form
+                </button>
+
+                <span class="privacy-note">
+                    Final eligibility is decided by the relevant government
+                    department.
+                </span>
+            </div>
+
+        </form>
+    </section>
+
+    <section id="resultsPanel" class="hidden" aria-live="polite">
+
+        <div class="results-header">
+            <h2>Your Scheme Matching Results</h2>
+            <p>
+                Results are based on your profile and the criteria available
+                in the current scheme dataset.
+            </p>
+
+            <div class="stats">
+                <div class="stat">
+                    <strong id="totalChecked">0</strong>
+                    <span>Schemes Checked</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="totalMatches">0</strong>
+                    <span>Potential Matches</span>
+                </div>
+
+                <div class="stat">
+                    <strong id="totalRejected">0</strong>
+                    <span>Criteria Mismatches</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="results-section">
+            <h2>
+                <span class="results-count" id="matchesCount">0 matches</span>
+                🟡 Potential Matches / Verification Pending
+            </h2>
+
+            <div id="matchedResults"></div>
+        </section>
+
+        <section class="results-section">
+            <h2>
+                <span class="results-count rejected" id="rejectedCount">0</span>
+                ❌ Schemes That Did Not Match
+            </h2>
+
+            <div id="rejectedResults"></div>
+        </section>
+
+        <div class="disclaimer">
+            <strong>Important:</strong>
+            Potential matches are preliminary results, not confirmed
+            eligibility. Some scheme criteria may be incomplete or
+            unverified. Check current official guidelines before applying.
+        </div>
+
+        <div class="results-actions">
+            <button class="secondary-button" id="editProfileButton"
+                    type="button">
+                ← Edit Profile
+            </button>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    YojanaMitra · Team Bug Slayers · Government Scheme Eligibility Matcher
+</footer>
+
+<script>
+"use strict";
+
+/*
+ * Frontend is served on port 5500.
+ * FastAPI backend is served on port 8000.
+ */
+const API_URL = "http://127.0.0.1:8000/match";
+
+const form = document.getElementById("profileForm");
+const errorBox = document.getElementById("errorBox");
+const loadingBox = document.getElementById("loadingBox");
+const submitButton = document.getElementById("submitButton");
+const resultsPanel = document.getElementById("resultsPanel");
+const formPanel = document.getElementById("formPanel");
+
+function getValue(id) {
+    const element = document.getElementById(id);
+    return element ? element.value.trim() : "";
+}
+
+function getNumber(id) {
+    const value = getValue(id);
+
+    if (value === "") {
+        return null;
+    }
+
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+}
+
+function getBoolean(id) {
+    return getValue(id) === "true";
+}
+
+function getOptionalBoolean(id) {
+    const value = getValue(id);
+
+    if (value === "") {
+        return null;
+    }
+
+    return value === "true";
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function(character) {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        };
+
+        return entities[character];
+    });
+}
+
+function safeURL(value) {
+    if (!value) {
+        return "";
+    }
+
+    try {
+        const url = new URL(value);
+
+        if (url.protocol === "https:" || url.protocol === "http:") {
+            return url.href;
+        }
+    } catch (error) {
+        // Do not render an invalid URL as a link.
+    }
+
+    return "";
+}
+
+function renderList(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+        return "";
+    }
+
+    return "<ul>" + items.map(function(item) {
+        return "<li>" + escapeHTML(item) + "</li>";
+    }).join("") + "</ul>";
+}
+
+function renderMatchedScheme(scheme) {
+    const name = scheme.scheme_name || scheme.name || "Government Scheme";
+
+    const description = scheme.description
+        ? "<p>" + escapeHTML(scheme.description) + "</p>"
+        : "";
+
+    const benefits = scheme.benefits
+        ? "<p><strong>Listed benefit:</strong> " +
+          escapeHTML(scheme.benefits) + "</p>"
+        : "";
+
+    const level = scheme.level || "Government Scheme";
+
+    const missingDocuments = Array.isArray(scheme.missing_documents)
+        ? scheme.missing_documents
+        : [];
+
+    const documentSection = missingDocuments.length
+        ? "<h4>Documents you may still need</h4>" +
+          renderList(missingDocuments)
+        : "";
+
+    const notes = Array.isArray(scheme.verification_notes)
+        ? scheme.verification_notes
+        : [];
+
+    const notesSection = notes.length
+        ? "<h4>Items to verify</h4>" + renderList(notes)
+        : "";
+
+    const url = safeURL(
+        scheme.application_url ||
+        scheme.official_source_url ||
+        scheme.source_url ||
+        scheme.url
+    );
+
+    const link = url
+        ? '<a class="apply-link" href="' + escapeHTML(url) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          'Official information ↗</a>'
+        : "";
+
+    const needsVerification =
+        scheme.eligibility_status === "Needs verification";
+
+    const statusTag = needsVerification
+        ? '<span class="tag">Verification pending</span>'
+        : '<span class="tag">Potential match</span>';
+
+    return `
+        <article class="scheme-card match">
+            <div class="scheme-topline">
+                <h3>${escapeHTML(name)}</h3>
+                ${statusTag}
+            </div>
+
+            ${description}
+
+            <div class="scheme-meta">
+                <span>Scheme level: ${escapeHTML(level)}</span>
+            </div>
+
+            ${benefits}
+            ${documentSection}
+            ${notesSection}
+            ${link}
+
+            <p>
+                <strong>Current status:</strong>
+                Eligibility has not necessarily been confirmed against
+                current official rules. Review the official source before
+                applying.
+            </p>
+        </article>
+    `;
+}
+
+function renderRejectedScheme(scheme) {
+    const name = scheme.scheme_name || scheme.name || "Government Scheme";
+
+    const reasons = Array.isArray(scheme.reasons)
+        ? scheme.reasons
+        : [];
+
+    const notes = Array.isArray(scheme.verification_notes)
+        ? scheme.verification_notes
+        : [];
+
+    const notesSection = notes.length
+        ? "<h4>Additional information</h4>" + renderList(notes)
+        : "";
+
+    const url = safeURL(
+        scheme.application_url ||
+        scheme.official_source_url ||
+        scheme.source_url ||
+        scheme.url
+    );
+
+    const link = url
+        ? '<a class="apply-link" href="' + escapeHTML(url) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          'Official information ↗</a>'
+        : "";
+
+    return `
+        <article class="scheme-card rejected">
+            <div class="scheme-topline">
+                <h3>${escapeHTML(name)}</h3>
+                <span class="tag no-match">CRITERIA MISMATCH</span>
+            </div>
+
+            <h4>Why it did not match</h4>
+            ${renderList(reasons)}
+            ${notesSection}
+            ${link}
+        </article>
+    `;
+}
+
+function showEmptyState(container, title, message) {
+    container.innerHTML = `
+        <div class="empty-state">
+            <h3>${escapeHTML(title)}</h3>
+            <p>${escapeHTML(message)}</p>
+        </div>
+    `;
+}
+
+function buildProfile() {
+    return {
+        age: getNumber("age"),
+        state: getValue("state"),
+        district: getValue("district"),
+        gender: getValue("gender"),
+
+        occupation: getValue("occupation"),
+        annual_income: getNumber("annual_income"),
+        category: getValue("category"),
+
+        land_owned: getBoolean("land_owned"),
+        land_area_acres: getNumber("land_area_acres"),
+
+        family_size: getNumber("family_size"),
+        education: getValue("education"),
+
+        disability_status: getBoolean("disability_status"),
+        marital_status: getValue("marital_status"),
+        residence: getValue("residence"),
+
+        income_tax_payer: getBoolean("income_tax_payer"),
+        government_employee: getBoolean("government_employee"),
+        government_pensioner: getBoolean("government_pensioner"),
+        monthly_pension: getNumber("monthly_pension"),
+        professional_practice: getBoolean("professional_practice"),
+        institutional_landholder: getBoolean("institutional_landholder"),
+
+        self_employed: getOptionalBoolean("self_employed"),
+        actively_engaged_in_trade:
+            getOptionalBoolean("actively_engaged_in_trade"),
+
+        similar_loan_last_5_years:
+            getOptionalBoolean("similar_loan_last_5_years"),
+
+        previous_loan_fully_repaid:
+            getOptionalBoolean("previous_loan_fully_repaid"),
+
+        previous_loan_scheme:
+            getValue("previous_loan_scheme") || null,
+
+        family_member_registered:
+            getOptionalBoolean("family_member_registered"),
+
+        family_member_in_government_service:
+            getOptionalBoolean("family_member_in_government_service"),
+
+        documents: Array.from(
+            document.querySelectorAll(
+                'input[name="documents"]:checked'
+            )
+        ).map(function(checkbox) {
+            return checkbox.value;
+        })
+    };
+}
+
+function showResults(data) {
+    const matched = Array.isArray(data.matched_schemes)
+        ? data.matched_schemes
+        : [];
+
+    const rejected = Array.isArray(data.rejected_schemes)
+        ? data.rejected_schemes
+        : [];
+
+    document.getElementById("totalChecked").textContent =
+        data.total_schemes_checked ??
+        matched.length + rejected.length;
+
+    document.getElementById("totalMatches").textContent =
+        data.total_matches ?? matched.length;
+
+    document.getElementById("totalRejected").textContent =
+        data.total_rejected ?? rejected.length;
+
+    document.getElementById("matchesCount").textContent =
+        matched.length + " potential matches";
+
+    document.getElementById("rejectedCount").textContent =
+        rejected.length;
+
+    const matchedContainer =
+        document.getElementById("matchedResults");
+
+    const rejectedContainer =
+        document.getElementById("rejectedResults");
+
+    if (matched.length > 0) {
+        matchedContainer.innerHTML =
+            matched.map(renderMatchedScheme).join("");
+    } else {
+        showEmptyState(
+            matchedContainer,
+            "No potential matches found",
+            "No scheme passed the known criteria in the current dataset. " +
+            "Review the mismatch reasons below and confirm your profile."
+        );
+    }
+
+    if (rejected.length > 0) {
+        rejectedContainer.innerHTML =
+            rejected.map(renderRejectedScheme).join("");
+    } else {
+        showEmptyState(
+            rejectedContainer,
+            "No criteria mismatches",
+            "No scheme was rejected by the encoded criteria."
+        );
+    }
+
+    if (data.disclaimer) {
+        const disclaimer = document.querySelector(".disclaimer");
+
+        if (disclaimer) {
+            disclaimer.textContent = data.disclaimer;
+        }
+    }
+
+    loadingBox.classList.add("hidden");
+    resultsPanel.classList.remove("hidden");
+
+    resultsPanel.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    errorBox.classList.add("hidden");
+    loadingBox.classList.remove("hidden");
+    resultsPanel.classList.add("hidden");
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Checking schemes…";
+
+    try {
+        const profile = buildProfile();
+
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(profile)
+        });
+
+        if (!response.ok) {
+            let detail = "The server could not process your profile.";
+
+            try {
+                const errorData = await response.json();
+
+                if (errorData.detail) {
+                    detail = typeof errorData.detail === "string"
+                        ? errorData.detail
+                        : JSON.stringify(errorData.detail);
+                }
+            } catch (error) {
+                // Keep the default error message.
+            }
+
+            throw new Error(detail);
+        }
+
+        const data = await response.json();
+        showResults(data);
+
+    } catch (error) {
+        loadingBox.classList.add("hidden");
+
+        errorBox.textContent =
+            "Unable to check schemes: " + error.message +
+            " Make sure the YojanaMitra backend is running on port 8000.";
+
+        errorBox.classList.remove("hidden");
+
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Find Potential Schemes →";
+    }
+});
+
+document.getElementById("editProfileButton")
+    .addEventListener("click", function() {
+        resultsPanel.classList.add("hidden");
+
+        formPanel.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    });
+
+form.addEventListener("reset", function() {
+    errorBox.classList.add("hidden");
+    loadingBox.classList.add("hidden");
+    resultsPanel.classList.add("hidden");
+});
+</script>
+
+</body>
+</html>
