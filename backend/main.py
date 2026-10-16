@@ -1085,6 +1085,13 @@ if ASSETS_DIR.exists():
 def chat_with_ai(payload: ChatRequest):
     message = payload.message.strip()
 
+    answer_language = str(
+        payload.answer_language or "Hinglish"
+    ).strip().casefold()
+
+    if answer_language not in {"english", "hindi", "hinglish"}:
+        answer_language = "hinglish"
+
     if not message:
         raise HTTPException(
             status_code=400,
@@ -1273,10 +1280,6 @@ def chat_with_ai(payload: ChatRequest):
 
     context = json.dumps(selected, ensure_ascii=False)
 
-    answer_language = payload.answer_language.strip().casefold()
-
-    if answer_language not in {"english", "hindi", "hinglish"}:
-       answer_language = "hinglish"
 
     prompt = f"""
 You are YojanaMitra, a helpful Indian government scheme assistant.
