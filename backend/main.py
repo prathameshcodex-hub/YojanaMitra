@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import urllib.error
+import urllib.request
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -46,11 +48,13 @@ class UserProfile(BaseModel):
     gender: Optional[str] = None
     occupation: Optional[str] = None
     annual_income: Optional[float] = None
+    bpl_status: Optional[bool] = None
     category: Optional[str] = None
     land_owned: Optional[bool] = None
     land_area_acres: Optional[float] = None
     family_size: Optional[int] = None
     education: Optional[str] = None
+    currently_enrolled_student: Optional[bool] = None
     disability_status: Optional[bool] = None
     marital_status: Optional[str] = None
     residence: Optional[str] = None
@@ -70,15 +74,29 @@ class UserProfile(BaseModel):
     documents: List[str] = Field(default_factory=list)
 
 
+
+class ChatRequest(BaseModel):
+    message: str = Field(..., min_length=1, max_length=1000)
+
+
+
+
 def normalize(value: Any) -> str:
-    """Normalize labels for comparisons without treating blanks as values."""
+    """Normalize text while preserving Hindi and other Unicode letters."""
     if value is None:
         return ""
 
     text = str(value).strip().casefold()
     text = text.replace("&", " and ")
-    text = re.sub(r"[^a-z0-9]+", " ", text)
+    text = re.sub(r"[\W_]+", " ", text, flags=re.UNICODE)
     return re.sub(r"\s+", " ", text).strip()
+
+
+def as_list(value: Any) -> List[Any]:
+    if value is None or value == "":
+        return []
+    return value if isinstance(value, list) else [value]
+
 
 
 def as_list(value: Any) -> List[Any]:
@@ -463,8 +481,9 @@ def evaluate_scheme(
             )
         elif user.annual_income > float(max_income):
             reasons.append(
-                "Annual family income exceeds the listed "
-                f"limit of ₹{float(max_income):,.0f}."
+                f"Annual family income exceeds the listed "
+                f"limit of \u20B9{float(max_income):,.0f}."
+
             )
 
     if min_income is not None:
@@ -479,6 +498,45 @@ def evaluate_scheme(
                 "Annual family income is below the listed "
                 f"minimum of ₹{float(min_income):,.0f}."
             )
+
+    # Shravan Bal: BPL status OR annual income below Rs. 21,000.
+    if scheme.get("id") == "shravan-bal":
+        if user.bpl_status is True:
+            # BPL-listed applicants satisfy this alternative.
+            pass
+
+        elif (
+            user.annual_income is not None
+            and user.annual_income < 21000
+        ):
+            # Income alternative is satisfied.
+            pass
+
+        elif (
+            user.bpl_status is False
+            and user.annual_income is not None
+            and user.annual_income >= 21000
+        ):
+            reasons.append(
+                "Applicant must be on the BPL list or have "
+                "annual income below \u20B921,000."
+            )
+
+        elif (
+            user.bpl_status is False
+            and user.annual_income is None
+        ):
+            add_unknown_note(
+                notes,
+                "Confirm annual income; applicant is not marked as BPL."
+            )
+
+        else:
+            add_unknown_note(
+                notes,
+                "Confirm BPL-list status or annual income below Rs. 21,000."
+            )
+
 
     # Social category
     expected_categories = criterion_values(
@@ -644,6 +702,7 @@ def evaluate_scheme(
         "disability_status": user.disability_status,
         "marital_status": user.marital_status,
         "education": user.education,
+        "currently_enrolled_student": user.currently_enrolled_student,
         "income_tax_payer": user.income_tax_payer,
         "government_employee": user.government_employee,
         "government_pensioner": user.government_pensioner,
@@ -962,7 +1021,22 @@ def match_schemes(profile: UserProfile):
     matched: List[Dict[str, Any]] = []
     rejected: List[Dict[str, Any]] = []
 
+
     for scheme in schemes:
+        # Some programmes are not individual eligibility matches.
+        if scheme.get("individual_matching_supported") is False:
+            reason = str(
+                scheme.get("matching_note")
+                or "This programme needs a separate eligibility workflow."
+            )
+
+            result = make_result(scheme, [], [reason])
+            result["eligibility_status"] = (
+                "Not an individual eligibility match"
+            )
+            rejected.append(result)
+            continue
+
         reasons, notes = evaluate_scheme(scheme, profile)
 
         if reasons:
@@ -973,6 +1047,7 @@ def match_schemes(profile: UserProfile):
             matched.append(
                 make_result(scheme, notes)
             )
+
 
     return {
         "total_schemes_checked": len(schemes),
@@ -996,3 +1071,334 @@ if FRONTEND_DIR.exists():
         StaticFiles(directory=str(FRONTEND_DIR), html=True),
         name="frontend",
     )
+
+@app.post("/chat")
+def chat_with_ai(payload: ChatRequest):
+    message = payload.message.strip()
+
+    if not message:
+        raise HTTPException(
+            status_code=400,
+            detail="Please enter a question."
+        )
+
+    try:
+        schemes = load_schemes()
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unable to load scheme data: {exc}"
+        )
+
+    # Prepare concise scheme records for AI grounding.
+    records = []
+
+    for scheme in schemes:
+        record = {
+            "name": scheme_name(scheme),
+            "id": scheme.get("id", ""),
+            "state": scheme.get("state", ""),
+            "level": scheme.get("level", ""),
+            "description": scheme.get("description", ""),
+            "benefits": scheme.get("benefits", ""),
+            "eligibility": scheme.get("eligibility", {}),
+            "required_documents": scheme.get(
+                "required_documents", []
+            ),
+            "verification_status": scheme.get(
+                "verification_status", "needs_official_verification"
+            ),
+            "verification_required": scheme.get(
+                "verification_required", True
+            ),
+            "official_source_url": scheme.get(
+                "official_source_url", ""
+            ) or scheme_url(scheme),
+        }
+
+        searchable = normalize(
+            json.dumps(record, ensure_ascii=False)
+        )
+        records.append((record, searchable))
+
+    # Find schemes that best match the user's question.
+    stop_words = {
+        "the", "a", "an", "is", "are", "was", "were",
+        "what", "which", "how", "can", "could", "would",
+        "please", "tell", "me", "about", "for", "and",
+        "or", "to", "of", "in", "my", "i", "you", "your",
+        "scheme", "schemes", "government", "yojana",
+        "eligible", "eligibility", "help"
+    }
+
+    question_words = set(
+        re.findall(r"[a-z0-9]+", normalize(message))
+    ) - stop_words
+
+    ranked = []
+
+    for record, searchable in records:
+        record_words = set(searchable.split())
+        name_words = set(
+            normalize(record["name"] + " " + record["id"]).split()
+        )
+
+        score = len(question_words & record_words)
+        score += 3 * len(question_words & name_words)
+
+        ranked.append((score, record))
+
+    ranked.sort(key=lambda item: item[0], reverse=True)
+
+
+    question_normalized = normalize(message)
+
+    direct_name_matches = [
+        record
+        for record, searchable in records
+        if (
+            (
+                normalize(record["name"])
+                and normalize(record["name"]) in question_normalized
+            )
+            or (
+                normalize(record["id"])
+                and normalize(record["id"]) in question_normalized
+            )
+        )
+    ]
+
+    if direct_name_matches:
+        selected = direct_name_matches[:3]
+    elif ranked and ranked[0][0] > 0:
+        best_score = ranked[0][0]
+        selected = [
+            record
+            for score, record in ranked
+            if score > 0 and score >= best_score - 1
+        ][:5]
+    else:
+        selected = [record for record, _ in records[:5]]
+
+    # For an explicitly named scheme, answer directly from stored data.
+    # This avoids asking the AI to invent scheme-specific facts.
+    if direct_name_matches:
+        scheme = direct_name_matches[0]
+
+        name = scheme_name(scheme)
+        description = str(scheme.get("description") or "").strip()
+        benefits = str(scheme.get("benefits") or "").strip()
+        documents = scheme.get("required_documents") or []
+
+        eligibility_data = scheme.get("eligibility") or {}
+        verification_note = str(
+            eligibility_data.get("verification_note") or ""
+        ).strip()
+
+        verification_status = str(
+            scheme.get(
+                "verification_status",
+                "needs_official_verification"
+            )
+        )
+
+        official_url = str(
+            scheme.get("official_source_url") or scheme_url(scheme) or ""
+        ).strip()
+
+        is_hindi = bool(re.search(r"[\u0900-\u097F]", message))
+
+        if is_hindi:
+            parts = [f"**{name}**"]
+
+            if description:
+                parts.append(
+                    f"**योजना का विवरण:** {description}"
+                )
+
+            if benefits:
+                parts.append(
+                    f"**लाभ:** {benefits}"
+                )
+
+            if documents:
+                document_lines = "\n".join(
+                    f"- {str(document)}"
+                    for document in documents
+                )
+                parts.append(
+                    "**योजना डेटा में सूचीबद्ध दस्तावेज़:**\n"
+                    + document_lines
+                )
+
+            parts.append(
+                "**ध्यान दें:** यह जानकारी उपलब्ध scheme dataset पर आधारित है। "
+                "आवेदन से पहले मौजूदा आधिकारिक नियमों और दस्तावेज़ों की पुष्टि करें।"
+            )
+
+            answer = "\n\n".join(parts)
+
+        else:
+            parts = [f"**{name}**"]
+
+            if description:
+                parts.append(f"**Description:** {description}")
+
+            if benefits:
+                parts.append(f"**Listed benefits:** {benefits}")
+
+            if documents:
+                document_lines = "\n".join(
+                    f"- {str(document)}"
+                    for document in documents
+                )
+                parts.append(
+                    "**Documents listed in the scheme dataset:**\n"
+                    + document_lines
+                )
+
+            parts.append(
+                "Verify current official rules before applying."
+            )
+
+            answer = "\n\n".join(parts)
+
+        if verification_note:
+            answer += "\n\n**Additional verification:** " + verification_note
+
+        scheme_references = []
+
+        if valid_http_url(official_url):
+            scheme_references.append({
+                "name": name,
+                "url": official_url,
+                "verification_status": verification_status,
+            })
+
+        return {
+            "answer": answer,
+            "scheme_references": scheme_references,
+            "disclaimer": (
+                "This response is based on stored scheme data. "
+                "Eligibility and current requirements must be verified "
+                "with the relevant official authority."
+            ),
+        }
+
+
+
+
+    context = json.dumps(selected, ensure_ascii=False)
+
+    prompt = f"""
+You are YojanaMitra, a helpful Indian government scheme assistant.
+
+Answer in the same language as the user's question.
+
+If the user asks in Hindi, reply in natural, grammatically correct,
+simple Hindi written in Devanagari. Use common Hindi terms such as
+"आय सहायता योजना" and "भूमि रिकॉर्ड" instead of awkward literal
+translations. Keep official scheme names like PM-KISAN unchanged.
+
+Do not invent facts, eligibility rules, or documents. Only describe
+information supported by the supplied scheme records. Clearly state
+when official verification is still pending. Never present a potential
+match as confirmed eligibility.
+
+
+Use only the scheme records provided below for scheme-specific facts.
+Do not invent eligibility conditions, income limits, benefits,
+deadlines, documents, application status, or website links.
+
+Important rules:
+- A potential match is not confirmed eligibility.
+- Respect each record's verification_status and
+  verification_required fields.
+- If official verification is pending, clearly say so.
+- If the records do not answer the question, admit that the
+  available data is insufficient.
+- Do not claim that you checked live government websites.
+- Use an official URL only when it is present in the records.
+- The relevant government authority makes the final decision.
+
+SCHEME RECORDS:
+{context}
+
+USER QUESTION:
+{message}
+
+Give a clear, useful answer. Keep it concise.
+"""
+
+
+    request_body = json.dumps({
+        "model": "qwen3:1.7b",
+        "prompt": prompt,
+        "stream": False,
+        "think": False,
+        "options": {
+            "temperature": 0.2,
+            "num_predict": 60
+        }
+    }).encode("utf-8")
+
+    request_obj = urllib.request.Request(
+        "http://127.0.0.1:11434/api/generate",
+        data=request_body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(
+            request_obj, timeout=90
+        ) as response:
+            ai_result = json.loads(
+                response.read().decode("utf-8")
+            )
+
+    except TimeoutError:
+        raise HTTPException(
+            status_code=504,
+            detail="AI took too long to respond. Please try again."
+        )
+
+    except urllib.error.URLError:
+        raise HTTPException(
+            status_code=503,
+            detail="Ollama is unavailable. Please start Ollama and retry."
+        )
+
+    except (json.JSONDecodeError, KeyError):
+        raise HTTPException(
+            status_code=502,
+            detail="Could not read the AI response."
+        )
+
+    answer = str(ai_result.get("response", "")).strip()
+
+    if not answer:
+        raise HTTPException(
+            status_code=502,
+            detail="The AI returned an empty response."
+        )
+
+    source_links = [
+        {
+            "name": record["name"],
+            "url": record["official_source_url"],
+            "verification_status": record["verification_status"],
+        }
+        for record in selected
+        if valid_http_url(record["official_source_url"])
+    ]
+
+    return {
+        "answer": answer,
+        "scheme_references": source_links,
+        "disclaimer": (
+            "AI-generated guidance only. Scheme information may "
+            "require official verification. Final eligibility is "
+            "decided by the relevant government department."
+        ),
+    }

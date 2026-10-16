@@ -540,6 +540,185 @@ footer {
         flex-direction: column;
     }
 }
+
+/* ===== YojanaMitra AI Assistant ===== */
+
+.ai-container {
+    max-width: 1250px;
+    margin: 28px auto;
+}
+
+.ai-assistant {
+    overflow: hidden;
+}
+
+.ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.ai-header h2 {
+    color: var(--navy);
+    font-size: 23px;
+    margin: 0 0 6px;
+}
+
+.ai-header p {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+}
+
+.ai-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 7px 12px;
+    background: #e9f8ef;
+    color: #137343;
+    border: 1px solid #c7ecd5;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 16px;
+    margin-bottom: 20px;
+    background: #f6f8fc;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.chat-message {
+    max-width: 90%;
+    padding: 13px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.assistant-message {
+    align-self: flex-start;
+    background: white;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+}
+
+.user-message {
+    align-self: flex-end;
+    background: #e9efff;
+    color: var(--navy);
+    border: 1px solid #cbd8ff;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-form label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #34415a;
+}
+
+.chat-form textarea {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    padding: 13px 15px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: white;
+    color: var(--text);
+    outline: none;
+    font: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.chat-form textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(36, 86, 216, 0.12);
+}
+
+#chatSendButton {
+    align-self: flex-start;
+    min-width: 130px;
+}
+
+#chatSendButton:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.chat-disclaimer {
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.chat-error {
+    color: #a61b29;
+    background: #fff0f0;
+    border: 1px solid #ffd0d0;
+}
+
+.chat-source-links {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.chat-source-links a {
+    color: var(--blue);
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    .ai-container {
+        width: 92%;
+        margin: 20px auto;
+    }
+
+    .ai-assistant {
+        padding: 18px;
+    }
+
+    .ai-header h2 {
+        font-size: 20px;
+    }
+
+    .chat-messages {
+        padding: 10px;
+    }
+
+    .chat-message {
+        max-width: 96%;
+    }
+
+    #chatSendButton {
+        width: 100%;
+    }
+}
+
 </style>
 </head>
 
@@ -748,6 +927,16 @@ footer {
 
                     <div class="field">
                         <label for="category">Social Category *</label>
+
+                    <div class="field">
+                         <label for="bpl_status">Is applicant listed in the BPL list?</label>
+                         <select id="bpl_status" name="bpl_status">
+                             <option value="">Not sure / Not provided</option>
+                             <option value="true">Yes</option>
+                            <option value="false">No</option>
+                         </select>
+                    </div>
+
                         <select id="category" name="category" required>
                             <option value="">Select category</option>
                             <option value="General">General</option>
@@ -1137,6 +1326,46 @@ footer {
     YojanaMitra · Team Bug Slayers · Government Scheme Eligibility Matcher
 </footer>
 
+<div class="container ai-container">
+    <section class="panel ai-assistant" aria-labelledby="aiTitle">
+        <div class="ai-header">
+            <div>
+                <h2 id="aiTitle">🤖 YojanaMitra AI Assistant</h2>
+                <p>Ask questions about government schemes in simple language.</p>
+            </div>
+            <span class="ai-badge">Powered by Ollama</span>
+        </div>
+
+        <div id="chatMessages" class="chat-messages" aria-live="polite">
+            <div class="chat-message assistant-message">
+                Namaste! 👋 Ask me about scheme benefits, eligibility
+                criteria, required documents, and official sources.
+            </div>
+        </div>
+
+        <form id="chatForm" class="chat-form">
+            <label for="chatInput">Your question</label>
+            <textarea
+                id="chatInput"
+                name="message"
+                rows="3"
+                maxlength="1000"
+                placeholder="Example: PM-KISAN ke liye kaunse documents chahiye?"
+                required
+            ></textarea>
+
+            <button class="primary-button" id="chatSendButton" type="submit">
+                Ask AI →
+            </button>
+        </form>
+
+        <p class="chat-disclaimer">
+            AI-generated guidance may require verification.
+            Always check official scheme information before applying.
+        </p>
+    </section>
+</div>
+
 <script>
 "use strict";
 
@@ -1365,6 +1594,7 @@ function buildProfile() {
 
         occupation: getValue("occupation"),
         annual_income: getNumber("annual_income"),
+        bpl_status: getOptionalBoolean("bpl_status"),
         category: getValue("category"),
 
         land_owned: getBoolean("land_owned"),
@@ -1556,6 +1786,210 @@ form.addEventListener("reset", function() {
     loadingBox.classList.add("hidden");
     resultsPanel.classList.add("hidden");
 });
+
+function appendChatInline(parent, text) {
+    const pattern =
+        /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*(.+?)\*\*|\*(.+?)\*/g;
+
+    let lastIndex = 0;
+    let match;
+
+    while ((match = pattern.exec(text)) !== null) {
+        parent.appendChild(
+            document.createTextNode(text.slice(lastIndex, match.index))
+        );
+
+        if (match[1]) {
+            try {
+                const url = new URL(match[2]);
+
+                const link = document.createElement("a");
+                link.href = url.href;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+                link.textContent = match[1];
+                parent.appendChild(link);
+            } catch (error) {
+                parent.appendChild(document.createTextNode(match[0]));
+            }
+        } else if (match[3]) {
+            const bold = document.createElement("strong");
+            bold.textContent = match[3];
+            parent.appendChild(bold);
+        } else if (match[4]) {
+            const italic = document.createElement("em");
+            italic.textContent = match[4];
+            parent.appendChild(italic);
+        }
+
+        lastIndex = pattern.lastIndex;
+    }
+
+    parent.appendChild(
+        document.createTextNode(text.slice(lastIndex))
+    );
+}
+
+
+function renderChatAnswer(container, answer) {
+    const cleaned = String(answer)
+        .replace(/\\([*_.])/g, "$1")
+        .replace(/\r/g, "");
+
+    container.replaceChildren();
+
+    let currentList = null;
+
+    cleaned.split("\n").forEach(function(line) {
+        const trimmed = line.trim();
+
+        if (!trimmed) {
+            currentList = null;
+            return;
+        }
+
+        const isNumbered = /^\d+\.\s+/.test(trimmed);
+        const isBullet = /^[-•]\s+/.test(trimmed);
+
+        if (isNumbered || isBullet) {
+            const tagName = isNumbered ? "ol" : "ul";
+
+            if (
+                !currentList ||
+                currentList.tagName.toLowerCase() !== tagName
+            ) {
+                currentList = document.createElement(tagName);
+                currentList.style.paddingLeft = "24px";
+                currentList.style.margin = "8px 0";
+                container.appendChild(currentList);
+            }
+
+            const item = document.createElement("li");
+            item.style.marginBottom = "6px";
+
+            const content = trimmed.replace(
+                /^(?:\d+\.\s+|[-•]\s+)/,
+                ""
+            );
+
+            appendChatInline(item, content);
+            currentList.appendChild(item);
+        } else {
+            currentList = null;
+
+            const paragraph = document.createElement("p");
+            paragraph.style.margin = "0 0 10px";
+
+            appendChatInline(paragraph, trimmed);
+            container.appendChild(paragraph);
+        }
+    });
+}
+
+
+const chatForm = document.getElementById("chatForm");
+const chatInput = document.getElementById("chatInput");
+const chatMessages = document.getElementById("chatMessages");
+const chatSendButton = document.getElementById("chatSendButton");
+
+if (chatForm && chatInput && chatMessages && chatSendButton) {
+    chatForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        const userBubble = document.createElement("div");
+        userBubble.className = "chat-message user-message";
+        userBubble.textContent = message;
+        chatMessages.appendChild(userBubble);
+
+        const aiBubble = document.createElement("div");
+        aiBubble.className = "chat-message assistant-message";
+        aiBubble.textContent = "Thinking... Please wait.";
+        chatMessages.appendChild(aiBubble);
+
+        chatInput.value = "";
+        chatSendButton.disabled = true;
+        chatSendButton.textContent = "Thinking...";
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail || "AI request failed.");
+            }
+
+             renderChatAnswer(aiBubble, data.answer || "No answer received.");
+
+            if (Array.isArray(data.scheme_references)) {
+                const sourceBox = document.createElement("div");
+                sourceBox.className = "chat-source-links";
+
+                const heading = document.createElement("strong");
+                heading.textContent = "Official scheme references:";
+                sourceBox.appendChild(heading);
+
+                const list = document.createElement("ul");
+
+                data.scheme_references.forEach(function(item) {
+                    try {
+                        const url = new URL(item.url);
+
+                        if (!["https:", "http:"].includes(url.protocol)) {
+                            return;
+                        }
+
+                        const li = document.createElement("li");
+                        const link = document.createElement("a");
+
+                        link.href = url.href;
+                        link.target = "_blank";
+                        link.rel = "noopener noreferrer";
+                        link.textContent = (item.name || "Scheme information") + " ↗";
+
+                        li.appendChild(link);
+                        list.appendChild(li);
+                    } catch (error) {
+                        // Ignore invalid source URLs.
+                    }
+                });
+
+                sourceBox.appendChild(list);
+                aiBubble.appendChild(sourceBox);
+            }
+
+            if (data.disclaimer) {
+                const note = document.createElement("p");
+                note.className = "chat-disclaimer";
+                note.textContent = data.disclaimer;
+                aiBubble.appendChild(note);
+            }
+
+        } catch (error) {
+            aiBubble.classList.add("chat-error");
+            aiBubble.textContent =
+                "AI response nahi mila: " + error.message;
+        } finally {
+            chatSendButton.disabled = false;
+            chatSendButton.textContent = "Ask AI →";
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatInput.focus();
+        }
+    });
+} else {
+    console.error("Chatbot HTML elements were not found.");
+}
+
 </script>
 
 </body>
