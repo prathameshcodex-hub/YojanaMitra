@@ -656,6 +656,77 @@ footer {
     box-shadow: 0 0 0 3px rgba(36, 86, 216, 0.12);
 }
 
+.chat-form textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(36, 86, 216, 0.12);
+}
+
+/* New voice controls styling starts here */
+
+.chat-voice-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 2px 0 6px;
+}
+
+.chat-form .chat-voice-language-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 2px;
+}
+
+.chat-voice-language {
+    max-width: 100%;
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+}
+
+.chat-voice-button {
+    padding: 10px 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    color: var(--navy);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.chat-voice-button:hover:not(:disabled) {
+    border-color: var(--blue);
+}
+
+.chat-voice-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.chat-voice-status {
+    flex-basis: 100%;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Your existing CSS continues below */
+
+#chatSendButton {
+    align-self: flex-start;
+    min-width: 130px;
+}
+
+#chatSendButton:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
 #chatSendButton {
     align-self: flex-start;
     min-width: 130px;
@@ -726,7 +797,12 @@ footer {
 
 <header>
     <div class="brand">
-        <div class="brand-icon">Y</div>
+        <img
+    src="assets/yojana-mitra-logo.png"
+    alt="YojanaMitra logo"
+    class="brand-logo"
+    style="width: 52px; height: 52px; object-fit: contain; flex-shrink: 0;"
+>
         <div>
             <h1>YojanaMitra</h1>
             <p>AI-Powered Government Scheme Matcher</p>
@@ -1353,6 +1429,36 @@ footer {
                 placeholder="Example: PM-KISAN ke liye kaunse documents chahiye?"
                 required
             ></textarea>
+            
+<div class="chat-voice-controls">
+    <label class="chat-voice-language-label" for="chatVoiceLanguage">
+        Voice language
+    </label>
+
+    <select id="chatVoiceLanguage" class="chat-voice-language">
+        <option value="hi-IN">Hindi / Hinglish</option>
+        <option value="en-IN">English (India)</option>
+    </select>
+<label class="chat-voice-language-label" for="chatAnswerLanguage">
+    Answer language
+</label>
+
+<select id="chatAnswerLanguage" class="chat-voice-language">
+    <option value="English">English</option>
+    <option value="Hindi">Hindi</option>
+    <option value="Hinglish" selected>Hinglish</option>
+</select>
+    <button type="button" id="chatVoiceButton" class="chat-voice-button">
+        Start voice input
+    </button>
+
+    <button type="button" id="chatSpeakButton" class="chat-voice-button" disabled>
+        Speak last answer
+    </button>
+
+    <span id="chatVoiceStatus" class="chat-voice-status" aria-live="polite"></span>
+</div>
+
 
             <button class="primary-button" id="chatSendButton" type="submit">
                 Ask AI →
@@ -1889,6 +1995,7 @@ function renderChatAnswer(container, answer) {
 
 const chatForm = document.getElementById("chatForm");
 const chatInput = document.getElementById("chatInput");
+const chatAnswerLanguage = document.getElementById("chatAnswerLanguage");
 const chatMessages = document.getElementById("chatMessages");
 const chatSendButton = document.getElementById("chatSendButton");
 
@@ -1920,7 +2027,12 @@ if (chatForm && chatInput && chatMessages && chatSendButton) {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ message: message })
+                body: JSON.stringify({
+    message: message,
+    answer_language: chatAnswerLanguage
+        ? chatAnswerLanguage.value
+        : "Hinglish"
+})
             });
 
             const data = await response.json();
@@ -1929,7 +2041,17 @@ if (chatForm && chatInput && chatMessages && chatSendButton) {
                 throw new Error(data.detail || "AI request failed.");
             }
 
-             renderChatAnswer(aiBubble, data.answer || "No answer received.");
+             
+const speechText = data.answer || "No answer received.";
+
+renderChatAnswer(aiBubble, speechText);
+aiBubble.dataset.speechText = speechText;
+
+const speakButton = document.getElementById("chatSpeakButton");
+if (speakButton) {
+    speakButton.disabled = false;
+}
+
 
             if (Array.isArray(data.scheme_references)) {
                 const sourceBox = document.createElement("div");
@@ -1988,6 +2110,181 @@ if (chatForm && chatInput && chatMessages && chatSendButton) {
     });
 } else {
     console.error("Chatbot HTML elements were not found.");
+}
+
+const chatVoiceButton = document.getElementById("chatVoiceButton");
+const chatSpeakButton = document.getElementById("chatSpeakButton");
+const chatVoiceLanguage = document.getElementById("chatVoiceLanguage");
+const chatVoiceStatus = document.getElementById("chatVoiceStatus");
+
+const SpeechRecognitionAPI =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+let voiceRecognition = null;
+let voiceSubmitPending = false;
+let voiceTranscriptReceived = false;
+
+function setVoiceStatus(message) {
+    if (chatVoiceStatus) {
+        chatVoiceStatus.textContent = message;
+    }
+}
+
+// Voice input: browser speech recognition
+if (chatVoiceButton && chatInput && chatForm) {
+    if (!SpeechRecognitionAPI) {
+        chatVoiceButton.disabled = true;
+        setVoiceStatus(
+            "Voice input is not supported in this browser. Please type your question."
+        );
+    } else {
+        voiceRecognition = new SpeechRecognitionAPI();
+        voiceRecognition.continuous = false;
+        voiceRecognition.interimResults = true;
+
+        voiceRecognition.onstart = function () {
+            chatVoiceButton.textContent = "Stop listening";
+            voiceTranscriptReceived = false;
+            voiceSubmitPending = false;
+            setVoiceStatus("Listening... Please speak clearly.");
+        };
+
+        voiceRecognition.onresult = function (event) {
+            let transcript = "";
+
+            for (let index = event.resultIndex; index < event.results.length; index++) {
+                transcript += event.results[index][0].transcript;
+            }
+
+            chatInput.value = transcript.trim();
+
+            for (let index = event.resultIndex; index < event.results.length; index++) {
+                if (event.results[index].isFinal) {
+                    voiceTranscriptReceived = true;
+                    voiceSubmitPending = true;
+                }
+            }
+
+            if (chatInput.value) {
+                setVoiceStatus("Recognised: " + chatInput.value);
+            }
+        };
+
+        voiceRecognition.onerror = function (event) {
+            voiceSubmitPending = false;
+
+            const messages = {
+                "not-allowed": "Microphone permission denied. Allow microphone access in your browser.",
+                "no-speech": "No speech detected. Please try again.",
+                "network": "Speech recognition needs a working browser/network service. You can type instead.",
+                "audio-capture": "No microphone was detected."
+            };
+
+            setVoiceStatus(
+                messages[event.error] || "Voice recognition failed: " + event.error
+            );
+        };
+
+        voiceRecognition.onend = function () {
+            chatVoiceButton.textContent = "Start voice input";
+
+            if (voiceSubmitPending && voiceTranscriptReceived && chatInput.value.trim()) {
+                voiceSubmitPending = false;
+                setVoiceStatus("Sending recognised question to the AI assistant...");
+                chatForm.requestSubmit();
+            } else if (chatInput.value.trim()) {
+                setVoiceStatus("Review the recognised text, then press Ask AI.");
+            } else {
+                setVoiceStatus("Voice input stopped.");
+            }
+        };
+
+        chatVoiceButton.addEventListener("click", function () {
+            if (chatVoiceButton.textContent === "Stop listening") {
+                voiceSubmitPending = false;
+                voiceRecognition.stop();
+                return;
+            }
+
+            voiceRecognition.lang = chatVoiceLanguage
+                ? chatVoiceLanguage.value
+                : "hi-IN";
+
+            try {
+                voiceRecognition.start();
+            } catch (error) {
+                setVoiceStatus(
+                    "Could not start voice input. Wait a moment and try again."
+                );
+            }
+        });
+    }
+}
+
+// Read the most recent AI answer aloud using browser text-to-speech.
+if (chatSpeakButton) {
+    if (!("speechSynthesis" in window)) {
+        chatSpeakButton.disabled = true;
+        setVoiceStatus("Spoken answers are not supported in this browser.");
+    } else {
+        chatSpeakButton.addEventListener("click", function () {
+            const answers = chatMessages.querySelectorAll(
+                ".assistant-message[data-speech-text]"
+            );
+
+            const lastAnswer = answers.length
+                ? answers[answers.length - 1].dataset.speechText
+                : "";
+
+            // Remove Markdown formatting and URLs before speaking.
+            const textToSpeak = (lastAnswer || "")
+                .replace(/https?:\/\/\S+/g, "")
+                .replace(/```[\s\S]*?```/g, " code omitted ")
+                .replace(/[*_`#>|]/g, "")
+                .trim();
+
+            if (!textToSpeak) {
+                setVoiceStatus("Ask the AI a question first.");
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = chatVoiceLanguage
+                ? chatVoiceLanguage.value
+                : "hi-IN";
+
+            const languagePrefix = utterance.lang.toLowerCase().split("-")[0];
+            const voices = window.speechSynthesis.getVoices();
+
+            const preferredVoice =
+                voices.find(function (voice) {
+                    return voice.lang.toLowerCase() === utterance.lang.toLowerCase();
+                }) ||
+                voices.find(function (voice) {
+                    return voice.lang.toLowerCase().startsWith(languagePrefix);
+                });
+
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
+
+            utterance.onstart = function () {
+                setVoiceStatus("Speaking the AI answer...");
+            };
+
+            utterance.onend = function () {
+                setVoiceStatus("Finished speaking.");
+            };
+
+            utterance.onerror = function () {
+                setVoiceStatus("Could not speak the answer. Try again or read the text.");
+            };
+
+            window.speechSynthesis.speak(utterance);
+        });
+    }
 }
 
 </script>

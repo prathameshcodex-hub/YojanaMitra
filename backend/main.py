@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from rag import retrieve_schemes
 
 APP_DIR = Path(__file__).resolve().parent
 DATA_FILE = APP_DIR / "data" / "schemes.json"
@@ -77,7 +78,7 @@ class UserProfile(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=1000)
-
+    answer_language: str = Field(default="Hinglish", max_length=20)
 
 
 
@@ -1071,6 +1072,14 @@ if FRONTEND_DIR.exists():
         StaticFiles(directory=str(FRONTEND_DIR), html=True),
         name="frontend",
     )
+    ASSETS_DIR = FRONTEND_DIR / "assets"
+
+if ASSETS_DIR.exists():
+    app.mount(
+        "/assets",
+        StaticFiles(directory=str(ASSETS_DIR)),
+        name="assets",
+    )
 
 @app.post("/chat")
 def chat_with_ai(payload: ChatRequest):
@@ -1121,38 +1130,11 @@ def chat_with_ai(payload: ChatRequest):
         )
         records.append((record, searchable))
 
-    # Find schemes that best match the user's question.
-    stop_words = {
-        "the", "a", "an", "is", "are", "was", "were",
-        "what", "which", "how", "can", "could", "would",
-        "please", "tell", "me", "about", "for", "and",
-        "or", "to", "of", "in", "my", "i", "you", "your",
-        "scheme", "schemes", "government", "yojana",
-        "eligible", "eligibility", "help"
-    }
-
-    question_words = set(
-        re.findall(r"[a-z0-9]+", normalize(message))
-    ) - stop_words
-
-    ranked = []
-
-    for record, searchable in records:
-        record_words = set(searchable.split())
-        name_words = set(
-            normalize(record["name"] + " " + record["id"]).split()
-        )
-
-        score = len(question_words & record_words)
-        score += 3 * len(question_words & name_words)
-
-        ranked.append((score, record))
-
-    ranked.sort(key=lambda item: item[0], reverse=True)
-
-
+   
+    # Retrieve relevant scheme records using SQLite FTS5.
     question_normalized = normalize(message)
 
+    # Preserve the direct-name shortcut for explicitly named schemes.
     direct_name_matches = [
         record
         for record, searchable in records
@@ -1170,102 +1152,107 @@ def chat_with_ai(payload: ChatRequest):
 
     if direct_name_matches:
         selected = direct_name_matches[:3]
-    elif ranked and ranked[0][0] > 0:
-        best_score = ranked[0][0]
-        selected = [
-            record
-            for score, record in ranked
-            if score > 0 and score >= best_score - 1
-        ][:5]
     else:
-        selected = [record for record, _ in records[:5]]
+        retrieved = retrieve_schemes(message, schemes, limit=5)
 
-    # For an explicitly named scheme, answer directly from stored data.
-    # This avoids asking the AI to invent scheme-specific facts.
+        # Keep the ranking order returned by the retrieval function.
+        records_by_id = {
+            str(record.get("id") or ""): record
+            for record, _searchable in records
+        }
+
+        selected = [
+            records_by_id[str(item.get("id") or "")]
+            for item in retrieved
+            if str(item.get("id") or "") in records_by_id
+        ][:5]
+
+
+    # Deterministic direct-scheme responses in the selected language.
     if direct_name_matches:
         scheme = direct_name_matches[0]
-
         name = scheme_name(scheme)
         description = str(scheme.get("description") or "").strip()
         benefits = str(scheme.get("benefits") or "").strip()
         documents = scheme.get("required_documents") or []
 
+        if not isinstance(documents, list):
+            documents = [str(documents)]
+
         eligibility_data = scheme.get("eligibility") or {}
         verification_note = str(
             eligibility_data.get("verification_note") or ""
         ).strip()
-
         verification_status = str(
             scheme.get(
                 "verification_status",
                 "needs_official_verification"
             )
         )
-
         official_url = str(
             scheme.get("official_source_url") or scheme_url(scheme) or ""
         ).strip()
 
-        is_hindi = bool(re.search(r"[\u0900-\u097F]", message))
-
-        if is_hindi:
-            parts = [f"**{name}**"]
-
+        if answer_language == "hindi":
+            parts = [
+                f"**{name}**",
+                "\u092f\u0939 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 SchemeSathi \u0915\u0947 \u092e\u094c\u091c\u0942\u0926\u093e \u0921\u0947\u091f\u093e \u0930\u093f\u0915\u0949\u0930\u094d\u0921 \u092a\u0930 \u0906\u0927\u093e\u0930\u093f\u0924 \u0939\u0948\u0964"
+            ]
             if description:
                 parts.append(
-                    f"**योजना का विवरण:** {description}"
+                    f"**\u092f\u094b\u091c\u0928\u093e \u0915\u093e \u0935\u093f\u0935\u0930\u0923 (record \u092e\u0947\u0902 \u0926\u0930\u094d\u091c):** {description}"
                 )
-
             if benefits:
                 parts.append(
-                    f"**लाभ:** {benefits}"
+                    f"**\u0932\u093e\u092d (record \u092e\u0947\u0902 \u0926\u0930\u094d\u091c):** {benefits}"
                 )
-
             if documents:
-                document_lines = "\n".join(
-                    f"- {str(document)}"
-                    for document in documents
-                )
                 parts.append(
-                    "**योजना डेटा में सूचीबद्ध दस्तावेज़:**\n"
-                    + document_lines
+                    "**\u0921\u0947\u091f\u093e\u0938\u0947\u091f \u092e\u0947\u0902 \u0938\u0942\u091a\u0940\u092c\u0926\u094d\u0927 \u0926\u0938\u094d\u0924\u093e\u0935\u0947\u091c\u093c:**\n"
+                    + "\n".join(f"- {document}" for document in documents)
                 )
-
+            if verification_note:
+                parts.append(
+                    f"**\u0905\u0924\u093f\u0930\u093f\u0915\u094d\u0924 \u091c\u093e\u0901\u091a:** {verification_note}"
+                )
             parts.append(
-                "**ध्यान दें:** यह जानकारी उपलब्ध scheme dataset पर आधारित है। "
-                "आवेदन से पहले मौजूदा आधिकारिक नियमों और दस्तावेज़ों की पुष्टि करें।"
+                "\u0906\u0935\u0947\u0926\u0928 \u0915\u0930\u0928\u0947 \u0938\u0947 \u092a\u0939\u0932\u0947 \u0906\u0927\u093f\u0915\u093e\u0930\u093f\u0915 \u0938\u0930\u0915\u093e\u0930\u0940 \u0928\u093f\u092f\u092e\u094b\u0902 \u0915\u0940 \u092a\u0941\u0937\u094d\u091f\u093f \u0915\u0930\u0947\u0902\u0964"
             )
-
-            answer = "\n\n".join(parts)
-
+        elif answer_language == "hinglish":
+            parts = [
+                f"**{name}**",
+                "Yeh information SchemeSathi ke current dataset record se li gayi hai."
+            ]
+            if description:
+                parts.append(f"**Description (record mein listed):** {description}")
+            if benefits:
+                parts.append(f"**Benefits (record mein listed):** {benefits}")
+            if documents:
+                parts.append(
+                    "**Documents (dataset mein listed):**\n"
+                    + "\n".join(f"- {document}" for document in documents)
+                )
+            if verification_note:
+                parts.append(f"**Extra verification:** {verification_note}")
+            parts.append(
+                "Apply karne se pehle current official government rules verify karein."
+            )
         else:
             parts = [f"**{name}**"]
-
             if description:
                 parts.append(f"**Description:** {description}")
-
             if benefits:
                 parts.append(f"**Listed benefits:** {benefits}")
-
             if documents:
-                document_lines = "\n".join(
-                    f"- {str(document)}"
-                    for document in documents
-                )
                 parts.append(
-                    "**Documents listed in the scheme dataset:**\n"
-                    + document_lines
+                    "**Documents listed in the dataset:**\n"
+                    + "\n".join(f"- {document}" for document in documents)
                 )
+            if verification_note:
+                parts.append(f"**Additional verification:** {verification_note}")
+            parts.append("Verify current official rules before applying.")
 
-            parts.append(
-                "Verify current official rules before applying."
-            )
-
-            answer = "\n\n".join(parts)
-
-        if verification_note:
-            answer += "\n\n**Additional verification:** " + verification_note
-
+        answer = "\n\n".join(parts)
         scheme_references = []
 
         if valid_http_url(official_url):
@@ -1279,26 +1266,36 @@ def chat_with_ai(payload: ChatRequest):
             "answer": answer,
             "scheme_references": scheme_references,
             "disclaimer": (
-                "This response is based on stored scheme data. "
-                "Eligibility and current requirements must be verified "
-                "with the relevant official authority."
+                "Stored scheme information may be incomplete or outdated. "
+                "The relevant government authority decides final eligibility."
             ),
         }
 
-
-
-
     context = json.dumps(selected, ensure_ascii=False)
+
+    answer_language = payload.answer_language.strip().casefold()
+
+    if answer_language not in {"english", "hindi", "hinglish"}:
+       answer_language = "hinglish"
 
     prompt = f"""
 You are YojanaMitra, a helpful Indian government scheme assistant.
 
-Answer in the same language as the user's question.
+Selected response language: {answer_language}
 
-If the user asks in Hindi, reply in natural, grammatically correct,
-simple Hindi written in Devanagari. Use common Hindi terms such as
-"आय सहायता योजना" and "भूमि रिकॉर्ड" instead of awkward literal
-translations. Keep official scheme names like PM-KISAN unchanged.
+Follow the selected language regardless of the language of the user's question.
+- English: Reply in clear, simple English.
+- Hindi: Reply in natural, grammatically correct Hindi written in Devanagari.
+- Hinglish: Reply in natural Hindi-English mix written in Roman script.
+
+Keep official scheme names such as PM-KISAN unchanged.
+
+Selected language instructions:
+- English: Answer in clear, natural English.
+- Hindi: Answer in natural, grammatically correct Hindi using Devanagari.
+- Hinglish: Answer in natural Hindi-English mix using Roman script.
+- Follow the selected response language, not the language of the question.
+- Keep official scheme names, acronyms and URLs unchanged.
 
 Do not invent facts, eligibility rules, or documents. Only describe
 information supported by the supplied scheme records. Clearly state
@@ -1327,18 +1324,43 @@ SCHEME RECORDS:
 USER QUESTION:
 {message}
 
-Give a clear, useful answer. Keep it concise.
+Follow the selected language strictly: {answer_language}.
+English means English; Hindi means Devanagari Hindi; Hinglish means
+Roman-script Hindi-English mix. Answer clearly in 2-5 sentences.
+Use only supported scheme facts and disclose when verification is pending.
 """
 
+    language_system = {
+        "english": (
+            "OUTPUT LANGUAGE: ENGLISH. Write the complete answer "
+            "in clear, natural English. Do not switch to Hindi. "
+            "Example: A scholarship helps students pay for education."
+        ),
+        "hindi": (
+            "OUTPUT LANGUAGE: HINDI. Write natural, grammatically "
+            "correct Hindi using Devanagari script. Avoid awkward "
+            "literal translations. Do not write the answer in English "
+            "or Roman-script Hindi. Example: ??????????? ??????? ?? "
+            "????? ?? ???? ??? ?????? ???? ???"
+        ),
+        "hinglish": (
+            "OUTPUT LANGUAGE: HINGLISH IN ROMAN SCRIPT. Use natural "
+            "Hindi sentence structure with common English words. "
+            "Do not answer entirely in English. Never use Devanagari. "
+            "Example: Scholarship students ko padhai ke kharch mein "
+            "help karti hai."
+        ),
+    }[answer_language]
 
     request_body = json.dumps({
         "model": "qwen3:1.7b",
+        "system": language_system,
         "prompt": prompt,
         "stream": False,
         "think": False,
         "options": {
             "temperature": 0.2,
-            "num_predict": 60
+            "num_predict": 300
         }
     }).encode("utf-8")
 
